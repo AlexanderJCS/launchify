@@ -1,3 +1,9 @@
+# Project specific things
+config/secret.toml
+
+# IDE things
+.idea
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
