@@ -7,8 +7,6 @@ launch_report_hours = 24
 refresh_time_seconds = 30
 
 [email.before_launch_email]
-send_before_launch_email = true
-
 subject = "Launch Soon!"
 
 email = """
@@ -18,8 +16,6 @@ Data by RocketLaunch.live
 """
 
 [email.beginning_of_day_email]
-send_beginning_of_day_email = true
-
 # To prevent skipping sending the daily notification, do not set the send time a few minutes before or after midnight.
 # To be safe, keep it 30 minutes away from midnight minimum.
 send_time = 09:30:00
