@@ -83,14 +83,6 @@ class ReminderList:
         for reminder in self._reminders:
             reminder.reset_status()
 
-    @staticmethod
-    def _request_api() -> requests.Response:
-        """
-        :return: The JSON response from the API
-        """
-
-        return requests.get("https://fdo.rocketlaunch.live/json/launches/next/5")
-
     def _add_new_reminders(self, api_response: dict):
         for launch_data in api_response["result"]:
             if not self.has_launch_id(launch_data["id"]):
@@ -144,7 +136,7 @@ class ReminderList:
         Updates all reminders, adds new reminders, and removes all reminders that need to be reminded.
         """
 
-        api_response: requests.Response = self._request_api()
+        api_response: requests.Response = request_api()
         if api_response.status_code != 200:
             logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
             return
@@ -176,7 +168,7 @@ def format_email(template: str, launch_data: dict) -> str:
 
     template = template.replace(
         "{launch_time}",
-        launch_datetime.strftime("%m/%d/%Y %H:%M:%S")
+        launch_datetime.strftime("%H:%M on %m/%d/%Y")
     )
 
     template = template.replace(
@@ -187,7 +179,54 @@ def format_email(template: str, launch_data: dict) -> str:
     return template
 
 
+def request_api() -> requests.Response:
+    """
+    :return: The JSON response from the API
+    """
+
+    return requests.get("https://fdo.rocketlaunch.live/json/launches/next/5")
+
+
+def send_daily_notifs(api_data: dict) -> None:
+    """
+    Sends the beginning-of-day report
+    :param api_data: The API data
+    """
+
+    launch_strs = []
+
+    for launch in api_data["result"]:
+        now = datetime.datetime.now()
+        launch_date = datetime.datetime.fromtimestamp(int(launch["sort_date"]))
+
+        time_til_launch = launch_date - now
+
+        launch_is_too_far = (time_til_launch >
+                             datetime.timedelta(hours=helper.consts.CONFIG["general_settings"]["launch_report_hours"]))
+        launch_already_happened = time_til_launch < datetime.timedelta(seconds=0)
+
+        if launch_is_too_far or launch_already_happened:
+            continue
+
+        email = format_email(helper.consts.CONFIG["email"]["beginning_of_day_email"]["email"], launch)
+
+        emailer.send_email(
+            helper.consts.SECRET["sender"]["username"],
+            helper.consts.SECRET["sender"]["password"],
+            helper.consts.CONFIG["email"]["beginning_of_day_email"]["subject"],
+            email,
+            helper.consts.SECRET["receiver"]["emails"]
+        )
+
+
 def main():
+    api_response: requests.Response = request_api()
+    if api_response.status_code != 200:
+        logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
+
+    else:
+        send_daily_notifs(api_response.json())
+
     reminder_list = ReminderList()
 
     while True:
