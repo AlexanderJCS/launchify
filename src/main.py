@@ -159,22 +159,19 @@ class ReminderList:
 
 
 def format_email(template: str, launch_data: dict, config: dict) -> str:
-    template = template.replace("{provider}", launch_data["provider"]["name"])
-    template = template.replace("{vehicle}", launch_data["vehicle"]["name"])
-    template = template.replace("{mission}", launch_data["name"])
-    template = template.replace("{launch_pad}", launch_data["pad"]["name"])
-    template = template.replace("{launch_site}", launch_data["pad"]["location"]["name"])
+    template = template.format(
+        provider=launch_data["provider"]["name"],
+        vehicle=launch_data["vehicle"]["name"],
+        mission=launch_data["name"],
+        launch_pad=launch_data["pad"]["name"],
+        launch_site=launch_data["pad"]["location"]["name"],
+        remind_before_launch_mins=str(config["general_settings"]["remind_before_launch_mins"])
+    )
 
     launch_datetime = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
 
-    template = template.replace(
-        "{launch_time}",
-        launch_datetime.strftime("%H:%M on %m/%d/%Y")
-    )
-
-    template = template.replace(
-        "{remind_before_launch_mins}",
-        str(config["general_settings"]["remind_before_launch_mins"])
+    template = template.format(
+        launch_time=launch_datetime.strftime("%H:%M on %m/%d/%Y")
     )
 
     return template
@@ -195,8 +192,6 @@ def send_daily_notifs(api_data: dict, config: dict, secret: dict) -> None:
     :param config: The config.toml data
     :param secret: The secret.toml data
     """
-
-    launch_strs = []
 
     for launch in api_data["result"]:
         now = datetime.datetime.now()
@@ -238,9 +233,6 @@ def main():
             time.sleep(config["general_settings"]["refresh_time_seconds"])
             continue
 
-        # Check for the before-launch reminders
-        reminder_list.update_reminders(api_response.json())
-
         # Check if the daily notification should be sent and send it
         # Also reset the sent_daily_notif boolean if
         daily_notif_send_time = config["email"]["beginning_of_day_email"]["send_time"]
@@ -252,6 +244,9 @@ def main():
             send_daily_notifs(api_response.json(), config, secret)
 
         time.sleep(config["general_settings"]["refresh_time_seconds"])
+
+        # Check for the before-launch reminders
+        reminder_list.update_reminders(api_response.json())
 
 
 if __name__ == "__main__":
