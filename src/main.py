@@ -53,8 +53,10 @@ class Reminder:
 
 
 class ReminderList:
-    def __init__(self):
+    def __init__(self, config: dict, secret: dict):
         self._reminders: list[Reminder] = []
+        self.config: dict = config
+        self.secret: dict = secret
 
     def get_reminder(self, launch_id: int) -> Reminder | None:
         """
@@ -88,13 +90,17 @@ class ReminderList:
             if not self.has_launch_id(launch_data["id"]):
                 launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
                 remind_time = launch_time - datetime.timedelta(
-                    minutes=helper.consts.CONFIG["general_settings"]["remind_before_launch_mins"]
+                    minutes=self.config["general_settings"]["remind_before_launch_mins"]
                 )
 
                 self._reminders.append(
                     Reminder(
-                        subject=helper.consts.CONFIG["email"]["before_launch_email"]["subject"],
-                        body=format_email(helper.consts.CONFIG["email"]["before_launch_email"]["email"], launch_data),
+                        subject=self.config["email"]["before_launch_email"]["subject"],
+                        body=format_email(
+                            self.config["email"]["before_launch_email"]["email"],
+                            launch_data,
+                            self.config
+                        ),
                         launch_id=launch_data["id"],
                         time_to_remind=remind_time
                     )
@@ -109,7 +115,7 @@ class ReminderList:
 
             launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
             remind_time = launch_time - datetime.timedelta(
-                minutes=helper.consts.CONFIG["general_settings"]["remind_before_launch_mins"]
+                minutes=self.config["general_settings"]["remind_before_launch_mins"]
             )
 
             reminder.time_to_remind = remind_time
@@ -122,7 +128,7 @@ class ReminderList:
 
         max_timedelta = datetime.timedelta(
             hours=1,
-            minutes=helper.consts.CONFIG["general_settings"]["remind_before_launch_mins"]
+            minutes=self.config["general_settings"]["remind_before_launch_mins"]
         )
 
         # Remove all reminders past 1 hour + remind_before_launch_mins
@@ -149,15 +155,15 @@ class ReminderList:
 
             if reminder.should_remind():
                 reminder.remind(
-                    helper.consts.SECRET["sender"]["username"],
-                    helper.consts.SECRET["sender"]["password"],
-                    helper.consts.SECRET["receiver"]["emails"]
+                    self.secret["sender"]["username"],
+                    self.secret["sender"]["password"],
+                    self.secret["receiver"]["emails"]
                 )
 
         self._remove_completed_reminders()
 
 
-def format_email(template: str, launch_data: dict) -> str:
+def format_email(template: str, launch_data: dict, config: dict) -> str:
     template = template.replace("{provider}", launch_data["provider"]["name"])
     template = template.replace("{vehicle}", launch_data["vehicle"]["name"])
     template = template.replace("{mission}", launch_data["name"])
@@ -173,7 +179,7 @@ def format_email(template: str, launch_data: dict) -> str:
 
     template = template.replace(
         "{remind_before_launch_mins}",
-        str(helper.consts.CONFIG["general_settings"]["remind_before_launch_mins"])
+        str(config["general_settings"]["remind_before_launch_mins"])
     )
 
     return template
@@ -187,10 +193,12 @@ def request_api() -> requests.Response:
     return requests.get("https://fdo.rocketlaunch.live/json/launches/next/5")
 
 
-def send_daily_notifs(api_data: dict) -> None:
+def send_daily_notifs(api_data: dict, config: dict, secret: dict) -> None:
     """
     Sends the beginning-of-day report
     :param api_data: The API data
+    :param config: The config.toml data
+    :param secret: The secret.toml data
     """
 
     launch_strs = []
@@ -202,36 +210,39 @@ def send_daily_notifs(api_data: dict) -> None:
         time_til_launch = launch_date - now
 
         launch_is_too_far = (time_til_launch >
-                             datetime.timedelta(hours=helper.consts.CONFIG["general_settings"]["launch_report_hours"]))
+                             datetime.timedelta(hours=config["general_settings"]["launch_report_hours"]))
         launch_already_happened = time_til_launch < datetime.timedelta(seconds=0)
 
         if launch_is_too_far or launch_already_happened:
             continue
 
-        email = format_email(helper.consts.CONFIG["email"]["beginning_of_day_email"]["email"], launch)
+        email = format_email(config["email"]["beginning_of_day_email"]["email"], launch, config)
 
         emailer.send_email(
-            helper.consts.SECRET["sender"]["username"],
-            helper.consts.SECRET["sender"]["password"],
-            helper.consts.CONFIG["email"]["beginning_of_day_email"]["subject"],
+            secret["sender"]["username"],
+            secret["sender"]["password"],
+            config["email"]["beginning_of_day_email"]["subject"],
             email,
-            helper.consts.SECRET["receiver"]["emails"]
+            secret["receiver"]["emails"]
         )
 
 
 def main():
+    config = helper.config_loader.load_toml("../config/config.toml")
+    secret = helper.config_loader.load_toml("../config/secret.toml")
+
     api_response: requests.Response = request_api()
     if api_response.status_code != 200:
         logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
 
     else:
-        send_daily_notifs(api_response.json())
+        send_daily_notifs(api_response.json(), config, secret)
 
-    reminder_list = ReminderList()
+    reminder_list = ReminderList(config, secret)
 
     while True:
         reminder_list.update_reminders()
-        time.sleep(helper.consts.CONFIG["general_settings"]["refresh_time_seconds"])
+        time.sleep(config["general_settings"]["refresh_time_seconds"])
 
 
 if __name__ == "__main__":

@@ -1,1 +1,1 @@
-from . import consts
+from . import config_loader
