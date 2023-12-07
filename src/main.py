@@ -137,18 +137,13 @@ class ReminderList:
             if not reminder.reminded() or datetime.datetime.now() - reminder.time_to_remind < max_timedelta
         ]
 
-    def update_reminders(self) -> None:
+    def update_reminders(self, api_response: dict) -> None:
         """
         Updates all reminders, adds new reminders, and removes all reminders that need to be reminded.
         """
 
-        api_response: requests.Response = request_api()
-        if api_response.status_code != 200:
-            logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
-            return
-
-        self._add_new_reminders(api_response.json())
-        self._update_reminder_time(api_response.json())
+        self._add_new_reminders(api_response)
+        self._update_reminder_time(api_response)
 
         for reminder in self._reminders:
             reminder.reset_status()
@@ -231,17 +226,31 @@ def main():
     config = helper.config_loader.load_toml("../config/config.toml")
     secret = helper.config_loader.load_toml("../config/secret.toml")
 
-    api_response: requests.Response = request_api()
-    if api_response.status_code != 200:
-        logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
-
-    else:
-        send_daily_notifs(api_response.json(), config, secret)
-
     reminder_list = ReminderList(config, secret)
+    sent_daily_notif = False
 
     while True:
-        reminder_list.update_reminders()
+        # Get the API response for this iteration
+        api_response: requests.Response = request_api()
+
+        if api_response.status_code != 200:
+            logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
+            time.sleep(config["general_settings"]["refresh_time_seconds"])
+            continue
+
+        # Check for the before-launch reminders
+        reminder_list.update_reminders(api_response.json())
+
+        # Check if the daily notification should be sent and send it
+        # Also reset the sent_daily_notif boolean if
+        daily_notif_send_time = config["email"]["beginning_of_day_email"]["send_time"]
+        if datetime.datetime.now().time() < daily_notif_send_time:
+            sent_daily_notif = False
+
+        elif sent_daily_notif is False:
+            logging.info("Sending daily notification")
+            send_daily_notifs(api_response.json(), config, secret)
+
         time.sleep(config["general_settings"]["refresh_time_seconds"])
 
 
