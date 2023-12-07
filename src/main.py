@@ -41,6 +41,7 @@ def main():
         elif sent_daily_notif is False:
             logging.info("Sending daily notification")
             notifs.daily.send_daily_notifs(api_response.json(), config, secret)
+            sent_daily_notif = True
 
         # Check for the before-launch reminders
         reminder_list.update_reminders(api_response.json())
