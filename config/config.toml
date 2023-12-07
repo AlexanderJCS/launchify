@@ -1,8 +1,8 @@
 [general_settings]
-remind_before_launch_mins = 1500
+remind_before_launch_mins = 15
 
-# how many hours before launch until you add the launch in the begin day report
-launch_report_hours = 96
+# how many hours before launch until you add the launch in the beginning of the day report
+launch_report_hours = 24
 
 refresh_time_seconds = 30
 
