@@ -2,8 +2,8 @@ import datetime
 import logging
 import time
 
-import notifs
-import helper
+from . import notifs
+from . import helper
 
 import requests
 
