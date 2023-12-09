@@ -17,8 +17,8 @@ def request_api() -> requests.Response:
 
 
 def main():
-    config = helper.config_loader.load_toml("../config/config.toml")
-    secret = helper.config_loader.load_toml("../config/secret.toml")
+    config = helper.config_loader.load_toml("config/config.toml")
+    secret = helper.config_loader.load_toml("config/secret.toml")
 
     reminder_list = notifs.prelaunch.ReminderList(config, secret)
     sent_daily_notif = False
