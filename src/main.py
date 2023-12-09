@@ -24,6 +24,14 @@ def main():
     sent_daily_notif = False
 
     while True:
+        # Check if the program should exit
+
+        should_exit = config["general_settings"]["should_exit"]
+        exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["general_settings"]["exit_time"])
+        if should_exit and abs(datetime.datetime.now() - exit_datetime) < datetime.timedelta(minutes=5):
+            logging.info("Exiting main loop")
+            break
+
         # Get the API response for this iteration
         api_response: requests.Response = request_api()
 
