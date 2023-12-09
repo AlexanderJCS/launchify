@@ -1,6 +1,6 @@
 import datetime
 
-from .. import emailer
+from src import emailer
 
 
 class Reminder:
