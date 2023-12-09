@@ -1,5 +1,5 @@
 import datetime
-from src import emailer
+from .. import emailer
 
 
 def send_daily_notifs(api_data: dict, config: dict, secret: dict) -> None:
