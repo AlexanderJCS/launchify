@@ -73,8 +73,8 @@ class ReminderList:
 
     def _remove_completed_reminders(self) -> None:
         """
-        Removes reminders once they are 1 hour past their completion time + the remind_before_launch time, and they have
-        reminded successfully.
+        Removes reminders once they are 1 hour past their completion time + the remind_before_launch time, effectively
+        removing the reminder 1 hour after launch
         """
 
         max_timedelta = datetime.timedelta(
@@ -85,7 +85,7 @@ class ReminderList:
         # Remove all reminders past 1 hour + remind_before_launch_mins
         self._reminders = [
             reminder for reminder in self._reminders
-            if not reminder.reminded() or datetime.datetime.now() - reminder.time_to_remind < max_timedelta
+            if datetime.datetime.now() - reminder.time_to_remind < max_timedelta
         ]
 
     def update_reminders(self, api_response: dict) -> None:
@@ -96,14 +96,17 @@ class ReminderList:
         self._add_new_reminders(api_response)
         self._update_reminder_time(api_response)
 
+        # Update all reminders
         for reminder in self._reminders:
             reminder.reset_status()
 
+        self._remove_completed_reminders()
+
+        # Notify all reminders that should be reminded
+        for reminder in self._reminders:
             if reminder.should_remind():
                 reminder.remind(
                     self.secret["sender"]["username"],
                     self.secret["sender"]["password"],
                     self.secret["receiver"]["emails"]
                 )
-
-        self._remove_completed_reminders()
