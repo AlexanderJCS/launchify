@@ -23,12 +23,12 @@ def send_daily_notifs(api_data: dict, config: dict, secret: dict) -> None:
         if launch_is_too_far or launch_already_happened:
             continue
 
-        email = emailer.format_email(config["email"]["beginning_of_day_email"]["email"], launch, config)
+        body = emailer.format_message(config["reminders"]["daily_reminder"]["message"], launch, config)
 
         emailer.send_email(
-            secret["sender"]["username"],
-            secret["sender"]["password"],
-            config["email"]["beginning_of_day_email"]["subject"],
-            email,
-            secret["receiver"]["emails"]
+            sender=secret["sender"]["username"],
+            password=secret["sender"]["password"],
+            subject=config["reminders"]["daily_reminder"]["subject"],
+            body=body,
+            to=secret["receiver"]["emails"]
         )

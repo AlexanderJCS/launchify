@@ -46,9 +46,9 @@ class ReminderList:
 
                 self._reminders.append(
                     Reminder(
-                        subject=self.config["email"]["before_launch_email"]["subject"],
-                        body=emailer.format_email(
-                            self.config["email"]["before_launch_email"]["email"],
+                        subject=self.config["reminders"]["before_launch_reminder"]["subject"],
+                        body=emailer.format_message(
+                            self.config["reminders"]["before_launch_reminder"]["message"],
                             launch_data,
                             self.config
                         ),

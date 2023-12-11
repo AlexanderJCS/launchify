@@ -6,7 +6,7 @@ from email.message import EmailMessage
 
 
 def send_email(sender: str, password: str, subject: str, body: str, to: list[str] | str):
-    logging.info("Sending email")
+    logging.info("Sending reminder")
 
     msg = EmailMessage()
 
@@ -22,7 +22,7 @@ def send_email(sender: str, password: str, subject: str, body: str, to: list[str
         smtp.send_message(msg)
 
 
-def format_email(template: str, launch_data: dict, config: dict) -> str:
+def format_message(template: str, launch_data: dict, config: dict) -> str:
     launch_datetime = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
 
     template = template.format(

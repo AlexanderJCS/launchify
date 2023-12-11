@@ -42,7 +42,7 @@ def main():
 
         # Check if the daily notification should be sent and send it
         # Also reset the sent_daily_notif boolean if
-        daily_notif_send_time = config["email"]["beginning_of_day_email"]["send_time"]
+        daily_notif_send_time = config["reminders"]["daily_reminder"]["send_time"]
         if datetime.datetime.now().time() < daily_notif_send_time:
             sent_daily_notif = False
 

@@ -10,26 +10,26 @@ refresh_time_seconds = 30
 # Whether the program should exit at the designated time
 should_exit = true
 # The time at which the program exits
-# Set this to before email.beginning_of_day_email.send_time to avoid sending the daily report twice
+# Set this to before reminder.daily_reminder.send_time to avoid sending the daily report twice
 exit_time = 04:00:00
 
-[email.before_launch_email]
+[reminders.before_launch_reminder]
 subject = "Launch Soon!"
 
-email = """
+message = """
 A {provider} {vehicle} will launch in {remind_before_launch_mins} mins at pad {launch_pad}, {launch_site}
 
 Data by RocketLaunch.live
 """
 
-[email.beginning_of_day_email]
+[reminders.daily_reminder]
 # To prevent skipping sending the daily notification, do not set the send time a few minutes before or after midnight.
 # To be safe, keep it 30 minutes away from midnight minimum.
 send_time = 09:30:00
 
-subject = "Upcoming Launch!"
+subject = "Launch Today!"
 
-email = """
+message = """
 A {provider} {vehicle} will launch at {launch_time} at pad {launch_pad} at {launch_site}
 
 Data by RocketLaunch.live
