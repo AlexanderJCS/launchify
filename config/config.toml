@@ -1,9 +1,4 @@
 [general_settings]
-remind_before_launch_mins = 15
-
-# how many hours before launch until you add the launch in the beginning of the day report
-launch_report_hours = 24
-
 refresh_time_seconds = 30
 
 
@@ -14,6 +9,9 @@ should_exit = true
 exit_time = 04:00:00
 
 [reminders.prelaunch]
+# How many minutes before launch until the reminder is sent
+mins_before_launch = 15
+
 subject = "Launch Soon!"
 
 message = """
@@ -23,6 +21,9 @@ Data by RocketLaunch.live
 """
 
 [reminders.daily]
+# How many hours before launch until you add it in the beginning of the day report
+hours_before_launch = 24
+
 # To prevent skipping sending the daily notification, do not set the send time a few minutes before or after midnight.
 # To be safe, keep it 30 minutes away from midnight minimum.
 send_time = 09:30:00

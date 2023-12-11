@@ -31,7 +31,7 @@ def format_message(template: str, launch_data: dict, config: dict) -> str:
         mission=launch_data["name"],
         launch_pad=launch_data["pad"]["name"],
         launch_site=launch_data["pad"]["location"]["name"],
-        remind_before_launch_mins=str(config["general_settings"]["remind_before_launch_mins"]),
+        remind_before_launch_mins=str(config["reminders"]["prelaunch"]["mins_before_launch"]),
         launch_time=launch_datetime.strftime("%H:%M on %m/%d/%Y")
     )
 

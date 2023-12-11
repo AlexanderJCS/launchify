@@ -41,7 +41,7 @@ class ReminderList:
             if not self.has_launch_id(launch_data["id"]):
                 launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
                 remind_time = launch_time - datetime.timedelta(
-                    minutes=self.config["general_settings"]["remind_before_launch_mins"]
+                    minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
                 )
 
                 self._reminders.append(
@@ -66,7 +66,7 @@ class ReminderList:
 
             launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
             remind_time = launch_time - datetime.timedelta(
-                minutes=self.config["general_settings"]["remind_before_launch_mins"]
+                minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
             )
 
             reminder.time_to_remind = remind_time
@@ -79,7 +79,7 @@ class ReminderList:
 
         max_timedelta = datetime.timedelta(
             hours=1,
-            minutes=self.config["general_settings"]["remind_before_launch_mins"]
+            minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
         )
 
         # Remove all reminders past 1 hour + remind_before_launch_mins

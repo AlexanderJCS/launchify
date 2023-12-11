@@ -17,7 +17,7 @@ def send_daily_notifs(api_data: dict, config: dict, secret: dict) -> None:
         time_til_launch = launch_date - now
 
         launch_is_too_far = (time_til_launch >
-                             datetime.timedelta(hours=config["general_settings"]["launch_report_hours"]))
+                             datetime.timedelta(hours=config["reminders"]["daily"]["hours_before_launch"]))
         launch_already_happened = time_til_launch < datetime.timedelta(seconds=0)
 
         if launch_is_too_far or launch_already_happened:
