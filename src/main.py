@@ -26,8 +26,8 @@ def main():
     while True:
         # Check if the program should exit
 
-        should_exit = config["general_settings"]["should_exit"]
-        exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["general_settings"]["exit_time"])
+        should_exit = config["exit"]["should_exit"]
+        exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["exit"]["exit_time"])
         if should_exit and abs(datetime.datetime.now() - exit_datetime) < datetime.timedelta(minutes=5):
             logging.info("Exiting main loop")
             break
@@ -37,7 +37,7 @@ def main():
 
         if api_response.status_code != 200:
             logging.error(f"API error: got status code {api_response.status_code}. Response: {api_response.text}")
-            time.sleep(config["general_settings"]["refresh_time_seconds"])
+            time.sleep(config["refresh"]["refresh_seconds"])
             continue
 
         # Check if the daily notification should be sent and send it
@@ -54,7 +54,7 @@ def main():
         # Check for the before-launch reminders
         reminder_list.update_reminders(api_response.json())
 
-        time.sleep(config["general_settings"]["refresh_time_seconds"])
+        time.sleep(config["refresh"]["refresh_seconds"])
 
 
 if __name__ == "__main__":

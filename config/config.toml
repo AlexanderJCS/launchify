@@ -1,7 +1,8 @@
-[general_settings]
-refresh_time_seconds = 30
+[refresh]
+# How often the program should refresh and check whether it should send a reminder
+refresh_seconds = 30
 
-
+[exit]
 # Whether the program should exit at the designated time
 should_exit = true
 # The time at which the program exits
