@@ -5,6 +5,7 @@ refresh_seconds = 30
 [exit]
 # Whether the program should exit at the designated time
 should_exit = true
+
 # The time at which the program exits
 # Set this to before reminder.daily.send_time to avoid sending the daily report twice
 exit_time = 04:00:00
