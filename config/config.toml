@@ -4,14 +4,16 @@ refresh_seconds = 30
 
 [exit]
 # Whether the program should exit at the designated time
+# When being hosted on a server, it is recommended for the program to exit at the given time to "reset" it in case anything goes awry
 should_exit = true
 
 # The time at which the program exits
-# Set this to before reminder.daily.send_time to avoid sending the daily report twice
+# !!! Set this time to before reminders.daily.send_time to avoid sending the daily report twice !!!
 exit_time = 04:00:00
 
 [reminders.prelaunch]
 # How many minutes before launch until the reminder is sent
+# (e.g., if the launch is at 07:30, the reminder will send at 07:15 if this value is set to 15)
 mins_before_launch = 15
 
 subject = "Launch Soon!"
@@ -27,7 +29,6 @@ Data by RocketLaunch.live
 hours_before_launch = 24
 
 # To prevent skipping sending the daily notification, do not set the send time a few minutes before or after midnight.
-# To be safe, keep it 30 minutes away from midnight minimum.
 send_time = 09:30:00
 
 subject = "Launch Today!"
