@@ -1,5 +1,5 @@
 import datetime
-from .reminder import Reminder
+from src.notifs.reminder import Reminder
 from src import emailer
 
 

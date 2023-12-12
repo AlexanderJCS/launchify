@@ -21,11 +21,12 @@ def main():
     secret = helper.config_loader.load_toml("config/secret.toml")
 
     reminder_list = notifs.prelaunch.ReminderList(config, secret)
-    sent_daily_notif = False
+
+    # If the API doesn't return 200 here honestly idk what to do
+    daily_notifs = notifs.daily.gen_daily_notifs(request_api().json(), config)
 
     while True:
         # Check if the program should exit
-
         should_exit = config["exit"]["should_exit"]
         exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["exit"]["exit_time"])
         if should_exit and abs(datetime.datetime.now() - exit_datetime) < datetime.timedelta(minutes=5):
@@ -40,18 +41,11 @@ def main():
             time.sleep(config["refresh"]["refresh_seconds"])
             continue
 
-        # Check if the daily notification should be sent and send it
-        # Also reset the sent_daily_notif boolean if
-        daily_notif_send_time = config["reminders"]["daily"]["send_time"]
-        if datetime.datetime.now().time() < daily_notif_send_time:
-            sent_daily_notif = False
+        # Send daily notifications
+        for notif in daily_notifs:
+            notif.update(secret)
 
-        elif sent_daily_notif is False:
-            logging.info("Sending daily notification")
-            notifs.daily.send_daily_notifs(api_response.json(), config, secret)
-            sent_daily_notif = True
-
-        # Check for the before-launch reminders
+        # Check for the prelaunch reminders
         reminder_list.update_reminders(api_response.json())
 
         time.sleep(config["refresh"]["refresh_seconds"])
