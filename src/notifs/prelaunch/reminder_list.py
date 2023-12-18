@@ -88,6 +88,10 @@ class ReminderList:
         self._add_new_reminders(api_response)
         self._update_reminder_time(api_response)
 
+        # Update all reminders
+        for reminder in self._reminders:
+            reminder.reset_status()
+
         self._remove_completed_reminders()
 
         # Notify all reminders that should be reminded

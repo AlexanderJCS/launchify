@@ -25,6 +25,15 @@ class Reminder:
         """
         return self._reminded
 
+    def reset_status(self) -> None:
+        """
+        Sets self._reminded back to False if it is True and self.time_to_remind is at least one hour in the future. This
+        is useful if self.time_to_remind was set to a later date.
+        """
+
+        if self._reminded is True and self.time_to_remind - datetime.datetime.now() > datetime.timedelta(hours=1):
+            self._reminded = False
+
     def remind(self, username: str, password: str, to: list[str] | str) -> None:
         """
         Sends an email to the specified recipient(s) with the specified subject and body.
