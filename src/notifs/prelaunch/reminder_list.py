@@ -28,14 +28,6 @@ class ReminderList:
 
         return self.get_reminder(launch_id) is not None
 
-    def _call_update_method(self) -> None:
-        """
-        Calls the update method of all reminders in self._reminders.
-        """
-
-        for reminder in self._reminders:
-            reminder.reset_status()
-
     def _add_new_reminders(self, api_response: dict):
         for launch_data in api_response["result"]:
             if not self.has_launch_id(launch_data["id"]):
@@ -95,10 +87,6 @@ class ReminderList:
 
         self._add_new_reminders(api_response)
         self._update_reminder_time(api_response)
-
-        # Update all reminders
-        for reminder in self._reminders:
-            reminder.reset_status()
 
         self._remove_completed_reminders()
 
