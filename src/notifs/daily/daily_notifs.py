@@ -16,7 +16,7 @@ class DailyNotif:
             )
         )
 
-    def update(self, secret: dict) -> None:
+    def send(self, secret: dict) -> None:
         """
         Sends daily notifications if they should send.
         """

@@ -43,7 +43,7 @@ def main():
 
         # Send daily notifications
         for notif in daily_notifs:
-            notif.update(secret)
+            notif.send(secret)
 
         # Check for the prelaunch reminders
         reminder_list.update_reminders(api_response.json())
