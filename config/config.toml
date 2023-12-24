@@ -1,4 +1,5 @@
 # Must be a valid timezone from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones in the TZ identifier column
+# All times, including the times in this config file, and the times in the daily report, are in this timezone
 timezone = "America/New_York"
 
 [refresh]
