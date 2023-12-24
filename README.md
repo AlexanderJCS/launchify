@@ -30,7 +30,7 @@ $ git clone https://github.com/AlexanderJCS/rocket-launch-reminder-v2.git
 
 Also make sure to download `requests`, a dependency of this project:
 ```shell
-$ py -m pip install requests
+$ py -m pip install -r requirements.txt
 ```
 
 ### Creating secret.toml
