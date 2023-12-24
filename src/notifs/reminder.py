@@ -11,7 +11,7 @@ class Reminder:
         :param body: The body of the reminder message
         :param launch_id: The unique launch ID
         :param time_to_remind: A timezone-aware datetime.datetime object
-               (self.should_remind will not work with timezone-naive datetime.datetime objects)
+               (several methods will not work with timezone-naive datetime.datetime objects)
         :param config: The config file
         """
 
@@ -42,7 +42,9 @@ class Reminder:
         is useful if self.time_to_remind was set to a later date.
         """
 
-        if self._reminded is True and self.time_to_remind - datetime.datetime.now() > datetime.timedelta(hours=1):
+        if (self._reminded is True and
+                self.time_to_remind - dt_helper.get_now(self.config) > datetime.timedelta(hours=1)):
+
             self._reminded = False
 
     def remind(self, username: str, password: str, to: list[str] | str) -> None:
