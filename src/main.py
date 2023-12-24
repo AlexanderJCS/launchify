@@ -74,5 +74,10 @@ if __name__ == "__main__":
     )
 
     logging.info("Started")
-    
-    main()
+
+    try:
+        main()
+
+    except Exception as e:
+        logging.exception(e)
+        raise e
