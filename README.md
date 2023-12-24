@@ -28,7 +28,7 @@ You can download this project by cloning the repository:
 $ git clone https://github.com/AlexanderJCS/rocket-launch-reminder-v2.git
 ```
 
-Also make sure to download `requests`, a dependency of this project:
+Also make sure to download all dependencies:
 ```shell
 $ py -m pip install -r requirements.txt
 ```
