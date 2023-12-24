@@ -1,5 +1,4 @@
-# Must be a valid timezone from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-# in the TZ identifier column
+# Must be a valid timezone from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones in the TZ identifier column
 timezone = "America/New_York"
 
 [refresh]
