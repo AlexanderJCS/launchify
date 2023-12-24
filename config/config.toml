@@ -1,3 +1,7 @@
+# Must be a valid timezone from https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# in the TZ identifier column
+timezone = "America/New_York"
+
 [refresh]
 # How often the program should refresh and check whether it should send a reminder
 refresh_seconds = 30

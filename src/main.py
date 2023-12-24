@@ -4,6 +4,7 @@ import time
 
 from . import notifs
 from . import helper
+from .helper import dt_helper
 
 import requests
 
@@ -14,6 +15,22 @@ def request_api() -> requests.Response:
     """
 
     return requests.get("https://fdo.rocketlaunch.live/json/launches/next/5")
+
+
+def should_exit(config: dict) -> bool:
+    """
+    :return: If the program should exit
+    """
+
+    if not config["exit"]["should_exit"]:
+        return False
+
+    exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["exit"]["exit_time"])
+
+    diff = abs(datetime.datetime.now() - exit_datetime)
+    exit_margin = datetime.timedelta(seconds=config["refresh"]["refresh_seconds"] * 3)
+
+    return diff < exit_margin
 
 
 def main():
@@ -27,10 +44,8 @@ def main():
 
     while True:
         # Check if the program should exit
-        should_exit = config["exit"]["should_exit"]
-        exit_datetime = datetime.datetime.combine(datetime.datetime.today(), config["exit"]["exit_time"])
-        if should_exit and abs(datetime.datetime.now() - exit_datetime) < datetime.timedelta(minutes=5):
-            logging.info("Exiting main loop")
+        if should_exit(config):
+            logging.info("Exiting program")
             break
 
         # Get the API response for this iteration

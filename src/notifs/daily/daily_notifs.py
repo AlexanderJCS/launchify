@@ -1,5 +1,6 @@
 import datetime
 
+from src.helper import dt_helper
 from src import emailer
 from src import notifs
 
@@ -12,8 +13,10 @@ class DailyNotif:
             launch_id=launch_data["id"],
             time_to_remind=datetime.datetime.combine(
                 datetime.date.today(),
-                config["reminders"]["daily"]["send_time"]
-            )
+                config["reminders"]["daily"]["send_time"],
+                tzinfo=dt_helper.get_timezone(config)
+            ),
+            config=config
         )
 
     def send(self, secret: dict) -> None:
@@ -34,22 +37,21 @@ def gen_daily_notifs(api_data: dict, config: dict) -> list[DailyNotif]:
     Sends the beginning-of-day report
     :param api_data: The API data
     :param config: The config.toml data
-    :param secret: The secret.toml data
     """
 
     daily_notifs: list[DailyNotif] = []
 
     for launch in api_data["result"]:
-        now = datetime.datetime.now()
-        launch_date = datetime.datetime.fromtimestamp(int(launch["sort_date"]))
+        now = dt_helper.get_now(config)
+        launch_date = datetime.datetime.fromisoformat(launch["t0"])
 
-        time_til_launch = launch_date - now
+        time_to_launch = launch_date - now
 
-        launch_is_too_far = time_til_launch > datetime.timedelta(
+        launch_is_too_far = time_to_launch > datetime.timedelta(
             hours=config["reminders"]["daily"]["hours_before_launch"]
         )
 
-        launch_already_happened = time_til_launch < datetime.timedelta(seconds=0)
+        launch_already_happened = time_to_launch < datetime.timedelta(seconds=0)
 
         if launch_is_too_far or launch_already_happened:
             continue

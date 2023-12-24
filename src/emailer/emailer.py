@@ -23,7 +23,7 @@ def send_email(sender: str, password: str, subject: str, body: str, to: list[str
 
 
 def format_message(template: str, launch_data: dict, config: dict) -> str:
-    launch_datetime = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
+    launch_datetime = datetime.datetime.fromisoformat(launch_data["t0"])
 
     template = template.format(
         provider=launch_data["provider"]["name"],

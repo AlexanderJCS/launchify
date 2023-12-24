@@ -1,13 +1,24 @@
 import datetime
 
+from src.helper import dt_helper
 from src import emailer
 
 
 class Reminder:
-    def __init__(self, subject: str, body: str, launch_id: str, time_to_remind: datetime.datetime):
+    def __init__(self, subject: str, body: str, launch_id: str, time_to_remind: datetime.datetime, config: dict):
+        """
+        :param subject: The subject of the reminder message
+        :param body: The body of the reminder message
+        :param launch_id: The unique launch ID
+        :param time_to_remind: A timezone-aware datetime.datetime object
+               (self.should_remind will not work with timezone-naive datetime.datetime objects)
+        :param config: The config file
+        """
+
         self.reminder_subject = subject
         self.reminder_body = body
         self.launch_id = launch_id
+        self.config = config
 
         self._reminded = False
         self.time_to_remind = time_to_remind
@@ -17,7 +28,7 @@ class Reminder:
         :return: True if the notifs should go off, False otherwise
         """
 
-        return self._reminded is False and datetime.datetime.now() > self.time_to_remind
+        return self._reminded is False and dt_helper.get_now(self.config) > self.time_to_remind
 
     def reminded(self) -> bool:
         """

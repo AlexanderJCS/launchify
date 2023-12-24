@@ -1,5 +1,7 @@
 import datetime
+
 from src.notifs.reminder import Reminder
+from src.helper import dt_helper
 from src import emailer
 
 
@@ -31,7 +33,8 @@ class ReminderList:
     def _add_new_reminders(self, api_response: dict):
         for launch_data in api_response["result"]:
             if not self.has_launch_id(launch_data["id"]):
-                launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
+                launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+
                 remind_time = launch_time - datetime.timedelta(
                     minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
                 )
@@ -45,7 +48,8 @@ class ReminderList:
                             self.config
                         ),
                         launch_id=launch_data["id"],
-                        time_to_remind=remind_time
+                        time_to_remind=remind_time,
+                        config=self.config
                     )
                 )
 
@@ -56,7 +60,8 @@ class ReminderList:
             if reminder is None:
                 continue
 
-            launch_time = datetime.datetime.fromtimestamp(int(launch_data["sort_date"]))
+            launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+
             remind_time = launch_time - datetime.timedelta(
                 minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
             )
@@ -77,7 +82,7 @@ class ReminderList:
         # Remove all reminders past 1 hour + remind_before_launch_mins
         self._reminders = [
             reminder for reminder in self._reminders
-            if datetime.datetime.now() - reminder.time_to_remind < max_timedelta
+            if dt_helper.get_now(self.config) - reminder.time_to_remind < max_timedelta
         ]
 
     def update_reminders(self, api_response: dict) -> None:
