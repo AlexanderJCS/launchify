@@ -14,7 +14,7 @@ def send_email(sender: str, password: str, subject: str, body: str, to: list[str
     msg.set_content(body)
 
     msg["subject"] = subject
-    msg["to"] = to
+    msg["bcc"] = to
     msg["from"] = sender
 
     with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
