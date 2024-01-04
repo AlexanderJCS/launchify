@@ -7,12 +7,14 @@ from src import emailer
 class Reminder:
     def __init__(self, subject: str, body: str, launch_id: str, time_to_remind: datetime.datetime, config: dict):
         """
+        Initializes the Reminder object.
+
         :param subject: The subject of the reminder message
         :param body: The body of the reminder message
         :param launch_id: The unique launch ID
         :param time_to_remind: A timezone-aware datetime.datetime object
                (several methods will not work with timezone-naive datetime.datetime objects)
-        :param config: The config file
+        :param config: The config file data
         """
 
         self.reminder_subject = subject

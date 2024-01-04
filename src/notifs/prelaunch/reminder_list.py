@@ -30,34 +30,47 @@ class ReminderList:
 
         return self.get_reminder(launch_id) is not None
 
-    def _add_new_reminders(self, api_response: dict):
+    def _add_new_reminders(self, api_response: dict) -> None:
+        """
+        Adds a reminder if the launch ID is not already in the ReminderList.
+        :param api_response: The API response
+        """
+
         for launch_data in api_response["result"]:
-            if not self.has_launch_id(launch_data["id"]):
-                launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+            if self.has_launch_id(launch_data["id"]):
+                continue
 
-                remind_time = launch_time - datetime.timedelta(
-                    minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
-                )
+            if not isinstance(launch_data["t0"], str):
+                continue
 
-                self._reminders.append(
-                    Reminder(
-                        subject=self.config["reminders"]["prelaunch"]["subject"],
-                        body=emailer.format_message(
-                            self.config["reminders"]["prelaunch"]["message"],
-                            launch_data,
-                            self.config
-                        ),
-                        launch_id=launch_data["id"],
-                        time_to_remind=remind_time,
-                        config=self.config
-                    )
+            launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+
+            remind_time = launch_time - datetime.timedelta(
+                minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
+            )
+
+            self._reminders.append(
+                Reminder(
+                    subject=self.config["reminders"]["prelaunch"]["subject"],
+                    body=emailer.format_message(
+                        self.config["reminders"]["prelaunch"]["message"],
+                        launch_data,
+                        self.config
+                    ),
+                    launch_id=launch_data["id"],
+                    time_to_remind=remind_time,
+                    config=self.config
                 )
+            )
 
     def _update_reminder_time(self, api_response: dict):
         for launch_data in api_response["result"]:
             reminder: Reminder | None = self.get_reminder(launch_data["id"])
 
             if reminder is None:
+                continue
+
+            if not isinstance(launch_data["t0"], str):
                 continue
 
             launch_time = datetime.datetime.fromisoformat(launch_data["t0"])

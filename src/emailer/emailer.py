@@ -23,6 +23,15 @@ def send_email(sender: str, password: str, subject: str, body: str, to: list[str
 
 
 def format_message(template: str, launch_data: dict, config: dict) -> str:
+    """
+    Formats the message to be sent to the user.
+
+    :param template: The template to format
+    :param launch_data: The launch data from the API. launch_data["t0"] must not be None.
+    :param config: The config toml file.
+    :return: The formatted message.
+    """
+
     launch_datetime = datetime.datetime.fromisoformat(launch_data["t0"])
 
     template = template.format(

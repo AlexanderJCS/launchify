@@ -7,6 +7,13 @@ from src import notifs
 
 class DailyNotif:
     def __init__(self, config: dict, launch_data: dict):
+        """
+        Initializes the DailyNotif object.
+
+        :param config: The configuration file data
+        :param launch_data: The launch data from the API. launch_data["t0"] must not be a string.
+        """
+
         self.reminder: notifs.Reminder = notifs.Reminder(
             subject=config["reminders"]["daily"]["subject"],
             body=emailer.format_message(config["reminders"]["daily"]["message"], launch_data, config),
@@ -43,6 +50,10 @@ def gen_daily_notifs(api_data: dict, config: dict) -> list[DailyNotif]:
 
     for launch in api_data["result"]:
         now = dt_helper.get_now(config)
+
+        if not isinstance(launch["t0"], str):
+            continue
+
         launch_date = datetime.datetime.fromisoformat(launch["t0"])
 
         time_to_launch = launch_date - now
