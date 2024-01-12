@@ -1,13 +1,14 @@
 from .email_receiver import EmailReceiver
+from ..emailer import emailer
 
 
 class Subscriber:
-    def __init__(self, receiver: EmailReceiver, secret: dict):
+    def __init__(self, receiver: EmailReceiver, config: dict, secret: dict):
         self._receiver = receiver
         self._secret = secret
+        self._config = config
 
-        # self.last_email = self._receiver.get_last_email()["date"]
-        self.last_email_date = None
+        self.last_email_date = self._receiver.get_last_email()["date"]
 
     def _add_subscription(self, email: str) -> None:
         """
@@ -60,10 +61,28 @@ class Subscriber:
         for content in email_contents:
             if content.lower().strip() == "subscribe":
                 self._add_subscription(email["From"])
+
+                emailer.send_email(
+                    body=self._config["subscription"]["subscribe"]["message"],
+                    subject=self._config["subscription"]["subscribe"]["subject"],
+                    to=email["From"],
+                    sender=self._secret["sender"]["username"],
+                    password=self._secret["sender"]["password"]
+                )
+
                 return True
 
             if content.lower().strip() == "unsubscribe":
                 self._remove_subscription(email["From"])
+
+                emailer.send_email(
+                    body=self._config["subscription"]["unsubscribe"]["message"],
+                    subject=self._config["subscription"]["unsubscribe"]["subject"],
+                    to=email["From"],
+                    sender=self._secret["sender"]["username"],
+                    password=self._secret["sender"]["password"]
+                )
+
                 return True
 
         return False

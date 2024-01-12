@@ -44,6 +44,7 @@ def main():
 
     sub = subscriber.subscriber.Subscriber(
         subscriber.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
+        config,
         secret
     )
 
