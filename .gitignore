@@ -1,5 +1,5 @@
 # Project specific things
-config/secret.toml
+config/secret.json
 
 # IDE things
 .idea

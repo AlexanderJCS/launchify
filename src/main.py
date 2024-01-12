@@ -2,6 +2,7 @@ import datetime
 import logging
 import time
 
+from . import subscriber
 from . import notifs
 from . import helper
 
@@ -34,12 +35,18 @@ def should_exit(config: dict) -> bool:
 
 def main():
     config = helper.config_loader.load_toml("config/config.toml")
-    secret = helper.config_loader.load_toml("config/secret.toml")
+    secret = helper.config_loader.load_json("config/secret.json")
 
     reminder_list = notifs.prelaunch.ReminderList(config, secret)
 
     # If the API doesn't return 200 here honestly idk what to do
     daily_notifs = notifs.daily.gen_daily_notifs(request_api().json(), config)
+
+    sub = subscriber.subscriber.Subscriber(
+        subscriber.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
+        config,
+        secret
+    )
 
     while True:
         # Check if the program should exit
@@ -61,6 +68,14 @@ def main():
 
         # Check for the prelaunch reminders
         reminder_list.update_reminders(api_response.json())
+
+        # Check for subscriptions and unsubscriptions
+        print("Checking subscriptions")
+        new_secret = sub.check()
+
+        if new_secret != secret:
+            print("Writing new secret")
+            helper.config_loader.write_json("config/secret.json", new_secret)
 
         time.sleep(config["refresh"]["refresh_seconds"])
 
