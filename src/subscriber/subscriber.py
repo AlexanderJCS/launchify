@@ -2,20 +2,22 @@ from .email_receiver import EmailReceiver
 
 
 class Subscriber:
-    def __init__(self, receiver: EmailReceiver, config: dict, secret: dict):
-        self.receiver = receiver
-        self.config = config
-        self.secret = secret
+    def __init__(self, receiver: EmailReceiver, secret: dict):
+        self._receiver = receiver
+        self._secret = secret
+
+        # self.last_email = self._receiver.get_last_email()["date"]
+        self.last_email_date = None
 
     def _add_subscription(self, email: str) -> None:
         """
-        Adds a subscription to the secret file.
+        Adds a subscription to the _secret file.
 
         :param email: The email to add
         """
 
-        self.secret["subscriptions"].append(email)
-        self.secret["subscriptions"] = list(set(self.secret["subscriptions"]))
+        self._secret["receiver"]["emails"].append(email)
+        self._secret["receiver"]["emails"] = list(set(self._secret["receiver"]["emails"]))
 
     def _remove_subscription(self, email: str) -> None:
         """
@@ -25,61 +27,50 @@ class Subscriber:
         """
 
         try:
-            self.secret["subscriptions"].remove(email)
+            self._secret["receiver"]["emails"].remove(email)
+
         except ValueError:
             pass
 
-    @staticmethod
-    def str_cmp(str1, str2) -> bool:
-        """
-        Compares two strings, ignoring case. Returns False if one of the arguments is not a string.
-
-        :param str1: The first string
-        :param str2: The second string
-        :return: True if the strings are equal ignoring case, False if they are not equal not strings
-        """
-
-        if not isinstance(str1, str) or not isinstance(str2, str):
-            return False
-
-        return str1.lower() == str2.lower()
-
-    def check_new_subscriptions(self) -> dict:
-        """
-        Checks for new subscriptions and adds them to secret.
-
-        :return: The new secret if there are new subscriptions, the same secret otherwise
-        """
-
-        for email in self.receiver.get_last_emails(1):
-            print(email["Subject"], email["Body"])
-
-            # if the subject or body of the email is "subscribe", add the email to the secret file
-            if self.str_cmp(email["Subject"], "subscribe") or \
-                    self.str_cmp(email["Body"], "subscribe"):
-
-                print(email["Subject"], email["Body"])
-
-                self._add_subscription(email["From"])
-
-        return self.secret
-
-    def check_unsubscriptions(self) -> dict:
-        for email in self.receiver.get_last_emails(1):
-            # if the subject or body of the email is "unsubscribe", remove the email from the secret file
-            if self.str_cmp(email["Subject"], "unsubscribe") or \
-                    self.str_cmp(email["Body"], "unsubscribe"):
-
-                self._remove_subscription(email["From"])
-
-        return self.secret
-
-    def check(self) -> dict:
+    def check(self) -> bool:
         """
         Checks for new subscriptions and unsubscriptions.
 
-        :return: The new secret
+        :return: If changes were made to the _secret file
         """
 
-        self.check_new_subscriptions()
-        return self.check_unsubscriptions()
+        email = self._receiver.get_last_email()
+
+        if email is None or email["date"] == self.last_email_date:
+            return False
+
+        self.last_email_date = email["date"]
+
+        # A list of strings to search for "subscribe" or "unsubscribe" in
+        email_contents: list[str] = [email["Subject"]]
+
+        # Add any plaintext attachments to the list of strings to search
+        for attachment in email.get_payload():
+            if attachment.get_content_type() != "text/plain":
+                continue
+
+            email_contents.append(attachment.get_payload(decode=True).decode())
+
+        # if the email contains "subscribe", add it to the _secret file
+        for content in email_contents:
+            if content.lower().strip() == "subscribe":
+                self._add_subscription(email["From"])
+                return True
+
+            if content.lower().strip() == "unsubscribe":
+                self._remove_subscription(email["From"])
+                return True
+
+        return False
+
+    def get_secret(self) -> dict:
+        """
+        :return: The secret file
+        """
+
+        return self._secret

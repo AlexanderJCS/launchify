@@ -14,4 +14,4 @@ def load_json(filepath: str):
 
 def write_json(filepath: str, data: dict):
     with open(filepath, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=2)

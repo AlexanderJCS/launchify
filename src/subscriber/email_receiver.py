@@ -8,6 +8,18 @@ class EmailReceiver:
         self.password = password
         self.imap_server = imap_server
 
+    def get_last_email(self):
+        """
+        :return: The last email. If there is an abort in imaplib, it will return None.
+        """
+
+        last_email = self.get_last_emails(1)
+
+        if len(last_email) == 0:
+            return None
+
+        return last_email[0]
+
     def get_last_emails(self, last_num=1):
         """
         :param last_num: The last number of emails to retrieve. E.g., if this is set to 3, retrieve the last 3 emails

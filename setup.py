@@ -5,7 +5,7 @@ def main():
     sender_email = input("Sender email address: ")
     sender_password = input("Sender password: ")
 
-    receiver_emails = input("Enter comma-separated receiver emails (do not include a space between emails): ")
+    receiver_emails = input("Enter comma-separated _receiver emails (do not include a space between emails): ")
 
     data = {
         "sender": {
@@ -13,7 +13,7 @@ def main():
             "password": sender_password
         },
 
-        "receiver": {
+        "_receiver": {
             "emails": receiver_emails.split(",")
         }
     }

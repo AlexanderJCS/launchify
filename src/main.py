@@ -44,7 +44,6 @@ def main():
 
     sub = subscriber.subscriber.Subscriber(
         subscriber.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
-        config,
         secret
     )
 
@@ -71,11 +70,12 @@ def main():
 
         # Check for subscriptions and unsubscriptions
         print("Checking subscriptions")
-        new_secret = sub.check()
+        secret_changed = sub.check()
 
-        if new_secret != secret:
-            print("Writing new secret")
-            helper.config_loader.write_json("config/secret.json", new_secret)
+        # Update the secret if it changed
+        if secret_changed:
+            secret = sub.get_secret()
+            helper.config_loader.write_json("config/secret.json", sub.get_secret())
 
         time.sleep(config["refresh"]["refresh_seconds"])
 

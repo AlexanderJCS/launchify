@@ -92,7 +92,7 @@ $ py setup.py
 
 Sender email address: youremail@gmail.com
 Sender password: your_16_digit_app_password
-Enter comma-separated receiver emails (do not include a space between emails): 9805554518@vtext.com,my_email@example.com
+Enter comma-separated _receiver emails (do not include a space between emails): 9805554518@vtext.com,my_email@example.com
 ```
 
 ### Adjusting config.toml
