@@ -20,7 +20,7 @@ exit_time = 04:00:00
 # (e.g., if the launch is at 07:30, the reminder will send at 07:15 if this value is set to 15)
 mins_before_launch = 15
 
-subject = "Launch Soon!"
+subject = "Launch Soon"
 
 message = """
 A {provider} {vehicle} will launch in {remind_before_launch_mins} mins on pad {launch_pad}, {launch_site}
@@ -35,7 +35,7 @@ hours_before_launch = 24
 # To prevent skipping sending the daily notification, do not set the send time a few minutes before or after midnight.
 send_time = 09:30:00
 
-subject = "Launch Today!"
+subject = "Launch Upcoming"
 
 message = """
 A {provider} {vehicle} will launch at {launch_time} on pad {launch_pad}, {launch_site}
