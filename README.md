@@ -16,11 +16,15 @@ This section covers the setup of the rocket launch reminder application. This tu
 
 ### Email Address
 
+#### Creating App Password
 The first step is to set up a Google and Gmail account that the rocket launch reminder program will utilize.
 
 1. Create a Google account [here](https://www.google.com/account/about/).
    1. Press the `Create an account` button on the top right
 2. Follow the steps [here](https://support.google.com/mail/answer/185833?hl=en) to create an app password. Save the app password for later.
+
+#### Spam Filter
+Go to [Gmail](https://mail.google.com/mail/u/0/#inbox) and log in with the account you just created. Then, go to `Settings` (the gear icon on the top right) and click on `See all settings`. Then, click on `Filters and Blocked Addresses`. Click on `Create a new filter`. In the `From` field, enter `-me`. Then, click on `Create filter`. Check the box that says `Never send it to Spam`. Finally, click on `Create filter`.
 
 ### Downloading
 You can download this project by cloning the repository:
