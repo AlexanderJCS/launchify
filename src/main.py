@@ -70,7 +70,6 @@ def main():
         reminder_list.update_reminders(api_response.json())
 
         # Check for subscriptions and unsubscriptions
-        print("Checking subscriptions")
         secret_changed = sub.check()
 
         # Update the secret if it changed
