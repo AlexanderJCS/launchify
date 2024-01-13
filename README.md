@@ -37,50 +37,8 @@ Also make sure to download all dependencies:
 $ py -m pip install -r requirements.txt
 ```
 
-### Creating secret.toml
-`secret.toml` will contain personal information such as the sender email address, the sender's app password, and the receiver email addresses.
-
-The first step is to understand who will be receiving these messages. If you want the messages to send to your phone via an SMS text message, the email will be `{your-10-digit-phone-number}@{sms-gateway.com}`. To understand which SMS gateway to use, consult the below tables:
-
-SMS gateway domains for U.S. Carriers:
-
-| Mobile Carrier     | SMS gateway domain        |
-|--------------------|---------------------------|
-| Alltel             | sms.alltelwireless.com    |
-| AT&T               | txt.att.net               |
-| Boost Mobile       | sms.myboostmobile.com     |
-| Consumer Cellular  | mailmymobile.net          |
-| Cricket Wireless   | mms.cricketwireless.net   |
-| Google Fi Wireless | msg.fi.google.com         |
-| MetroPCS           | mymetropcs.com            |
-| Republic Wireless  | text.republicwireless.com |
-| Sprint             | messaging.sprintpcs.com   |
-| T-Mobile           | tmomail.net               |
-| Ting               | message.ting.com          |
-| U.S. Cellular      | email.uscc.net            |
-| Verizon Wireless   | vtext.com                 |
-| Virgin Mobile      | vmobl.com                 |
-| XFinity Mobile     | vtext.com                 |
-
-SMS gateway domains for Canadian carriers:
-
-| Mobile Carrier        | SMS gateway domain   |
-|-----------------------|----------------------|
-| Bell Canada           | txt.bell.ca          |
-| Bell MTS              | text.mts.net         |
-| Fido Solutions        | fido.ca              |
-| Freedom Mobile        | txt.freedommobile.ca |
-| Koodo Mobile          | msg.telus.com        |
-| PC Mobile             | mobiletxt.ca         |
-| Rogers Communications | None                 |
-| SaskTel               | sms.sasktel.com      |
-| Telus                 | msg.telus.com        |
-
-For example, if I had the Verizon Wireless mobile carrier, and my phone number is `980-555-4518`, the receiver email would be `9805554518@vtext.com`.
-
-Keep note of your SMS gateway address, since this will be needed for the next steps.
-
-The next step is to create the `secret.toml` configuration file. First, `cd` to the cloned directory from the last step.
+### Creating secret.json
+The next step is to create the `secret.json` configuration file. First, `cd` to the cloned directory from the last step.
 ```shell
 $ cd rocket-launch-reminder-v2
 ```
@@ -92,20 +50,37 @@ $ py setup.py
 
 Sender email address: youremail@gmail.com
 Sender password: your_16_digit_app_password
-Enter comma-separated _receiver emails (do not include a space between emails): 9805554518@vtext.com,my_email@example.com
 ```
+
+### Subscribing to the reminders
+
+To subscribe to the reminders, first run the program:
+```shell
+$ py -m src.main
+```
+
+Then, text the email you just created like how you would normally text someone. The text message should just contain the word `subscribe`. After you subscribe, wait 1-2 minutes for a confirmation text. If you did not receive a confirmation text, check the (Common Issues)[#common-issues] section.
+
+That's it! You are now subscribed to the reminders. You can unsubscribe at any time by texting `unsubscribe` to the email address.
 
 ### Adjusting config.toml
 
 You can adjust `config/config.toml` to your liking to configure how the program behaves.
 
-### Running the program!
+### Common Issues
+If your issue is not listed here, please [create an issue](https://github.com/AlexanderJCS/rocket-launch-reminder-v2/issues).
 
-You can run the program by performing:
-```shell
-$ py -m src.main
+#### I did not receive a confirmation text
+If you did not receive a confirmation text, check the following:
+1. the program is running.
+2. you configured the spam filter correctly. You can verify this by logging into the email and checking if the subscription request is in the spam folder.
+
+#### Tomllib is not found
+If you receive an error like the following:
 ```
-Assuming you are in the project's root directory
+ModuleNotFoundError: No module named 'tomllibb'
+```
+ensure that you are using Python 3.11 or later, since tomllib was added in Python 3.11.
 
 ## Contributing
 
