@@ -11,7 +11,7 @@ def main():
             "password": sender_password
         },
 
-        "_receiver": {
+        "receiver": {
             "emails": []
         }
     }
