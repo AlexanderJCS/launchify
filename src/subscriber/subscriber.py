@@ -35,6 +35,52 @@ class Subscriber:
         except ValueError:
             pass
 
+    @staticmethod
+    def _get_email_contents(email) -> list[str]:
+        """
+        All relevant contents of an email that you may want to use for subscription checking.
+
+        :return: A list of strings to search for "subscribe" or "unsubscribe" in
+        """
+
+        # A list of strings to search for "subscribe" or "unsubscribe" in
+        email_contents: list[str] = [email["Subject"]]
+
+        # Add any plaintext attachments to the list of strings to search
+        for attachment in email.get_payload():
+            if attachment.get_content_type() != "text/plain":
+                continue
+
+            email_contents.append(attachment.get_payload(decode=True).decode())
+
+        return email_contents
+
+    def _handle_subscription(self, email, subscribe: bool) -> None:
+        """
+        Handles a subscription.
+
+        :param email: The email to subscribe or unsubscribe
+        :param subscribe: Whether to subscribe or unsubscribe
+        """
+
+        if subscribe:
+            logging.info(f"Adding {email['From']} to the subscription list")
+            self._add_subscription(email["From"])
+
+        else:
+            logging.info(f"Removing {email['From']} from the subscription list")
+            self._remove_subscription(email["From"])
+
+        sub_or_unsub = "subscribe" if subscribe else "unsubscribe"
+
+        emailer.send_email(
+            body=self._config["subscription"][sub_or_unsub]["message"],
+            subject=self._config["subscription"][sub_or_unsub]["subject"],
+            to=email["From"],
+            sender=self._secret["sender"]["username"],
+            password=self._secret["sender"]["password"]
+        )
+
     def check(self) -> bool:
         """
         Checks for new subscriptions and unsubscriptions.
@@ -49,45 +95,16 @@ class Subscriber:
 
         self.last_email_date = email["date"]
 
-        # A list of strings to search for "subscribe" or "unsubscribe" in
-        email_contents: list[str] = [email["Subject"]]
+        email_contents = self._get_email_contents(email)
 
-        # Add any plaintext attachments to the list of strings to search
-        for attachment in email.get_payload():
-            if attachment.get_content_type() != "text/plain":
-                continue
-
-            email_contents.append(attachment.get_payload(decode=True).decode())
-
-        # if the email contains "subscribe", add it to the _secret file
+        # Subscribe and unsubscribe if the email contains the relevant strings
         for content in email_contents:
             if content.lower().strip() == "subscribe":
-                logging.info(f"Adding {email['From']} to the subscription list")
-                self._add_subscription(email["From"])
-
-                emailer.send_email(
-                    body=self._config["subscription"]["subscribe"]["message"],
-                    subject=self._config["subscription"]["subscribe"]["subject"],
-                    to=email["From"],
-                    sender=self._secret["sender"]["username"],
-                    password=self._secret["sender"]["password"]
-                )
-
+                self._handle_subscription(email, True)
                 return True
 
             if content.lower().strip() == "unsubscribe":
-                logging.info(f"Removing {email['From']} from the subscription list")
-
-                self._remove_subscription(email["From"])
-
-                emailer.send_email(
-                    body=self._config["subscription"]["unsubscribe"]["message"],
-                    subject=self._config["subscription"]["unsubscribe"]["subject"],
-                    to=email["From"],
-                    sender=self._secret["sender"]["username"],
-                    password=self._secret["sender"]["password"]
-                )
-
+                self._handle_subscription(email, False)
                 return True
 
         return False
