@@ -1,3 +1,5 @@
+import logging
+
 from .email_receiver import EmailReceiver
 from ..emailer import emailer
 
@@ -60,6 +62,7 @@ class Subscriber:
         # if the email contains "subscribe", add it to the _secret file
         for content in email_contents:
             if content.lower().strip() == "subscribe":
+                logging.info(f"Adding {email['From']} to the subscription list")
                 self._add_subscription(email["From"])
 
                 emailer.send_email(
@@ -73,6 +76,8 @@ class Subscriber:
                 return True
 
             if content.lower().strip() == "unsubscribe":
+                logging.info(f"Removing {email['From']} from the subscription list")
+
                 self._remove_subscription(email["From"])
 
                 emailer.send_email(
