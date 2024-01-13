@@ -24,7 +24,7 @@ subject = "Launch Soon"
 message = """
 A {provider} {vehicle} will launch in {remind_before_launch_mins} mins on pad {launch_pad}, {launch_site}
 
-Data by RocketLaunch.live
+Reply with "unsubscribe" to opt out
 """
 
 [reminders.daily]
@@ -38,13 +38,13 @@ subject = "Launch Upcoming"
 message = """
 A {provider} {vehicle} will launch at {launch_time} on pad {launch_pad}, {launch_site}
 
-Data by RocketLaunch.live
+Reply with "unsubscribe" to opt out
 """
 
 [subscription.subscribe]
 subject = "Subscribed"
-message = "You subscribed to Rocket Launch Reminder! You will receive daily alerts and reminders 15 mins before launch."
+message = "You subscribed to Rocket Launch Reminder! You will receive daily alerts and reminders 15 mins before launch. You can type \"unsubscribe\" to opt out."
 
 [subscription.unsubscribe]
 subject = "Unsubscribed"
-message = "You unsubscribed from Rocket Launch Reminder. You will no longer receive reminders."
+message = "You unsubscribed from Rocket Launch Reminder. You can type \"subscribe\" to opt back in."
