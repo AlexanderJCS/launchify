@@ -10,6 +10,8 @@ This application offers two types of reminders:
 
 This program sends text messages using [SMS gateway](https://en.wikipedia.org/wiki/SMS_gateway), which provides a free method of sending text messages with the benefit of sending an email as an alternative.
 
+Data is sourced from the [RocketLaunch.live API](https://www.rocketlaunch.live/api).
+
 ## Setup
 
 This section covers the setup of the rocket launch reminder application. This tutorial already assumes that Python 3.11 or greater is installed, along with git.
