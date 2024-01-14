@@ -99,6 +99,9 @@ class Subscriber:
 
         # Subscribe and unsubscribe if the email contains the relevant strings
         for content in email_contents:
+            if content is None:
+                continue
+
             if content.lower().strip() == "subscribe":
                 self._handle_subscription(email, True)
                 return True
