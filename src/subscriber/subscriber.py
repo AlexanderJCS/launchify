@@ -97,6 +97,8 @@ class Subscriber:
 
         email_contents = self._get_email_contents(email)
 
+        print(email_contents)
+
         # Subscribe and unsubscribe if the email contains the relevant strings
         for content in email_contents:
             if content is None:
