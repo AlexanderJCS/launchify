@@ -39,6 +39,7 @@ class EmailReceiver:
 
         mail_items = []
 
+        # Iterate backwards through message IDs
         for i in range(messages, messages - last_num, -1):
             res, msg = connection.fetch(str(i), "(RFC822)")
 
