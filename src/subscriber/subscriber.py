@@ -1,4 +1,5 @@
 import logging
+from email import message
 
 from .email_receiver import EmailReceiver
 from ..emailer import emailer
@@ -45,17 +46,19 @@ class Subscriber:
         """
 
         # A list of strings to search for "subscribe" or "unsubscribe" in
-        email_contents: list[str] = [email["Subject"]]
+        email_contents: list[str | None] = [email["Subject"]]
 
         # Add any plaintext attachments to the list of strings to search
         if not email.is_multipart():
             return email_contents
 
-        for attachment in email.get_payload():
-            if attachment.get_content_type() != "text/plain":
+        for part in email.walk():
+            content_type = part.get_content_type()
+
+            if content_type != "text/plain" and content_type != "text/html":
                 continue
 
-            email_contents.append(attachment.get_payload(decode=True).decode())
+            email_contents.append(part.get_payload(decode=True).decode())
 
         return email_contents
 
@@ -101,19 +104,17 @@ class Subscriber:
 
         email_contents = self._get_email_contents(email)
 
-        print(email_contents)
-
         # Subscribe and unsubscribe if the email contains the relevant strings
         for content in email_contents:
             if content is None:
                 continue
 
-            if content.lower().strip() == "subscribe":
-                self._handle_subscription(email, True)
+            if "unsubscribe" in content.lower().strip() == "unsubscribe":
+                self._handle_subscription(email, False)
                 return True
 
-            if content.lower().strip() == "unsubscribe":
-                self._handle_subscription(email, False)
+            elif "subscribe" in content.lower().strip():
+                self._handle_subscription(email, True)
                 return True
 
         return False
