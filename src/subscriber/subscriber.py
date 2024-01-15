@@ -1,8 +1,7 @@
 import logging
-from email import message
 
-from .email_receiver import EmailReceiver
-from ..emailer import emailer
+from src.emailer.email_receiver import EmailReceiver
+from src.emailer import emailer
 
 
 class Subscriber:

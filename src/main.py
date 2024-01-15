@@ -43,7 +43,7 @@ def main():
     daily_notifs = notifs.daily.gen_daily_notifs(request_api().json(), config)
 
     sub = subscriber.subscriber.Subscriber(
-        subscriber.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
+        src.emailer.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
         config,
         secret
     )
