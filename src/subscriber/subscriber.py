@@ -10,7 +10,8 @@ class Subscriber:
         self._secret = secret
         self._config = config
 
-        self.last_email_date = self._receiver.get_last_email()["date"]
+        # self.last_email_date = self._receiver.get_last_email()["date"]
+        self.last_email_date = None
 
     def _add_subscription(self, email: str) -> None:
         """
@@ -47,6 +48,9 @@ class Subscriber:
         email_contents: list[str] = [email["Subject"]]
 
         # Add any plaintext attachments to the list of strings to search
+        if not email.is_multipart():
+            return email_contents
+
         for attachment in email.get_payload():
             if attachment.get_content_type() != "text/plain":
                 continue
