@@ -10,8 +10,7 @@ class Subscriber:
         self._secret = secret
         self._config = config
 
-        # self.last_email_date = self._receiver.get_last_email()["date"]
-        self.last_email_date = None
+        self.last_email_date = self._receiver.get_last_email()["date"]
 
     def _add_subscription(self, email: str) -> None:
         """
