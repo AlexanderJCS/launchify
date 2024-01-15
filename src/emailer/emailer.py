@@ -7,7 +7,10 @@ from email.message import EmailMessage
 
 
 def send_email(sender: str, password: str, subject: str, body: str, to: list[str] | str):
-    logging.info("Sending reminder")
+    if isinstance(to, str):
+        logging.info(f"Sending email to {to}: subject: {subject}")
+    elif isinstance(to, list):
+        logging.info(f"Sending email to {len(to)} recipients: subject: {subject}")
 
     msg = EmailMessage()
 
