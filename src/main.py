@@ -5,6 +5,7 @@ import time
 from . import subscriber
 from . import notifs
 from . import helper
+from .emailer import email_receiver
 
 import requests
 
@@ -43,7 +44,7 @@ def main():
     daily_notifs = notifs.daily.gen_daily_notifs(request_api().json(), config)
 
     sub = subscriber.subscriber.Subscriber(
-        src.emailer.email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
+        email_receiver.EmailReceiver(secret["sender"]["username"], secret["sender"]["password"]),
         config,
         secret
     )
