@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 from src.notifs.reminder import Reminder
 from src.helper import dt_helper
@@ -44,6 +45,8 @@ class ReminderList:
                 continue
 
             launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+
+            logging.info(f"Adding reminder for launch ID {launch_data['id']} at {launch_time}")
 
             remind_time = launch_time - datetime.timedelta(
                 minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
