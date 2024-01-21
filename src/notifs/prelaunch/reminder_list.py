@@ -45,8 +45,9 @@ class ReminderList:
                 continue
 
             launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+            launch_time = launch_time.astimezone(dt_helper.get_timezone(self.config))
 
-            logging.info(f"Adding reminder for launch ID {launch_data['id']} at {launch_time}")
+            logging.info(f"Adding reminder for launch ID {launch_data['id']} for {launch_time}")
 
             remind_time = launch_time - datetime.timedelta(
                 minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
@@ -81,6 +82,11 @@ class ReminderList:
             remind_time = launch_time - datetime.timedelta(
                 minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
             )
+
+            if remind_time == reminder.time_to_remind:
+                continue
+
+            logging.info(f"Updating reminder time for launch ID {launch_data['id']} to {remind_time}")
 
             reminder.time_to_remind = remind_time
 
