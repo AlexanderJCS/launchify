@@ -28,7 +28,7 @@ class DailyNotif:
 
     def send(self, secret: dict) -> None:
         """
-        Sends daily notifications if they should send.
+        Sends the daily notification if they should send.
         """
 
         if self.reminder.should_remind():
