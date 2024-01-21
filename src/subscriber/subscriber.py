@@ -1,4 +1,5 @@
 import logging
+import re
 
 from src.emailer.email_receiver import EmailReceiver
 from src.emailer import emailer
@@ -68,7 +69,7 @@ class Subscriber:
         :param subscribe: Whether to subscribe or unsubscribe
         """
 
-        if subscribe:
+        if subscribe and email["From"]:
             logging.info(f"Adding {email['From']} to the subscription list")
             self._add_subscription(email["From"])
 
@@ -86,6 +87,20 @@ class Subscriber:
             password=self._secret["sender"]["password"]
         )
 
+    def _emailer_in_blacklist(self, email: str) -> bool:
+        """
+        Checks if the emailer is in the blacklist.
+
+        :param email: The email to check
+        :return: Whether the emailer is in the blacklist
+        """
+
+        return any(
+            re.findall(blacklist_entry, email)
+
+            for blacklist_entry in self._config["subscription"]["subscribe"]["blacklist"]
+        )
+
     def check(self) -> bool:
         """
         Checks for new subscriptions and unsubscriptions.
@@ -95,11 +110,14 @@ class Subscriber:
 
         email = self._receiver.get_last_email()
 
-        if email is None or email["date"] == self.last_email_date:
+        if (email is None
+                or email["date"] == self.last_email_date
+                or self._emailer_in_blacklist(email["From"])):
             return False
 
         self.last_email_date = email["date"]
 
+        # Search email contents for "subscribe" or "unsubscribe"
         email_contents = self._get_email_contents(email)
 
         # Subscribe and unsubscribe if the email contains the relevant strings

@@ -45,6 +45,11 @@ Reply with "unsubscribe" to opt out
 subject = "Subscribed"
 message = "You subscribed to Rocket Launch Reminder! You will receive daily alerts and reminders 15 mins before launch. You can type \"unsubscribe\" to opt out."
 
+# A list of regexes, that if found in an email address, will cause the subscription to fail silently
+blacklist = [
+    "@googlemail\\.com"  # Google Mail Delivery Subsystem
+]
+
 [subscription.unsubscribe]
 subject = "Unsubscribed"
 message = "You unsubscribed from Rocket Launch Reminder. You can type \"subscribe\" to opt back in."
