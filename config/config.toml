@@ -11,7 +11,7 @@ refresh_seconds = 30
 # When being hosted on a server, it is recommended for the program to exit at the given time to "reset" it in case anything goes awry
 should_exit = true
 
-# The time at which the program exits
+# The time at which the program exits in the computer's local time
 # !!! Set this time to before reminders.daily.send_time to avoid sending the daily report twice !!!
 exit_time = 04:00:00
 
