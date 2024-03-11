@@ -1,4 +1,3 @@
-import datetime
 import smtplib
 import logging
 
@@ -36,8 +35,7 @@ def format_message(template: str, launch_data: dict, config: dict) -> str:
     :return: The formatted message.
     """
 
-    launch_datetime = datetime.datetime.fromisoformat(launch_data["t0"])
-    launch_datetime = launch_datetime.astimezone(dt_helper.get_timezone(config))
+    launch_datetime = dt_helper.load_isoformat(launch_data["t0"], dt_helper.get_timezone(config))
 
     template = template.format(
         provider=launch_data["provider"]["name"],

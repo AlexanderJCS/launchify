@@ -44,8 +44,7 @@ class ReminderList:
             if not isinstance(launch_data["t0"], str):
                 continue
 
-            launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
-            launch_time = launch_time.astimezone(dt_helper.get_timezone(self.config))
+            launch_time = dt_helper.load_isoformat(launch_data["t0"], dt_helper.get_timezone(self.config))
 
             logging.info(f"Adding reminder for launch ID {launch_data['id']} for {launch_time}")
 
@@ -77,7 +76,7 @@ class ReminderList:
             if not isinstance(launch_data["t0"], str):
                 continue
 
-            launch_time = datetime.datetime.fromisoformat(launch_data["t0"])
+            launch_time = dt_helper.load_isoformat(launch_data["t0"], dt_helper.get_timezone(self.config))
 
             remind_time = launch_time - datetime.timedelta(
                 minutes=self.config["reminders"]["prelaunch"]["mins_before_launch"]
