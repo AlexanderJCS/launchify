@@ -1,4 +1,4 @@
-# Rocket Launch Reminder
+# Launchify
 
 A Python program that sends text message (SMS) and email reminders about rocket launches.
 
