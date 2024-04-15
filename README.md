@@ -31,7 +31,7 @@ Go to [Gmail](https://mail.google.com/mail/u/0/#inbox) and log in with the accou
 ### Downloading
 You can download this project by cloning the repository:
 ```shell
-$ git clone https://github.com/AlexanderJCS/rocket-launch-reminder-v2.git
+$ git clone https://github.com/AlexanderJCS/launchify.git
 ```
 
 Also make sure to download all dependencies:
