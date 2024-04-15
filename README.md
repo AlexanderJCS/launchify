@@ -42,7 +42,7 @@ $ py -m pip install -r requirements.txt
 ### Creating secret.json
 The next step is to create the `secret.json` configuration file. First, `cd` to the cloned directory from the last step.
 ```shell
-$ cd rocket-launch-reminder-v2
+$ cd launchify
 ```
 
 Then, run `setup.py`. Make sure you have the email address and app password prepared from step 1. Do not include spaces in your app password.
